@@ -13,8 +13,8 @@ services:
     environment:
       ADMINLIST: ${ADMINLIST}
       WHITELIST: ${WHITELIST}
-      SERVER_NAME: ${SERVER_NAME-Name of the game as it will appear in the game listing}
-      SERVER_DESC: ${SERVER_NAME-Description of the game that will appear in the listing}
+      SERVER_NAME: ${SERVER_NAME-Name}
+      SERVER_DESC: ${SERVER_NAME-Description}
       MAX_PLAYER: ${MAX_PLAYER-0}
       VISIBILITY_PUBLIC: ${VISIBILITY_PUBLIC-false}
       VISIBILITY_LAN: ${VISIBILITY_LAN-true}
