@@ -1,0 +1,69 @@
+version: '3.8'
+services:
+  factorio:
+    build: .
+
+    container_name: factorio
+
+    ports:
+      - "34197:34197/udp"
+
+    restart: unless-stopped
+
+    environment:
+      ADMINLIST: ${ADMINLIST-beuluis}
+      WHITELIST: ${WHITELIST-beuluis}
+      # https://github.com/GameServerManagers/Game-Server-Configs/blob/master/Factorio/server-settings.json
+      SERVER_NAME: ${SERVER_NAME-Name of the game as it will appear in the game listing}
+      SERVER_DESC: ${SERVER_NAME-Description of the game that will appear in the listing}
+      # Maximum number of players allowed, admins can join even a full server. 0 means unlimited.
+      MAX_PLAYER: ${MAX_PLAYER-0}
+      # Game will be published on the official Factorio matching server
+      VISIBILITY_PUBLIC: ${VISIBILITY_PUBLIC-false}
+      # Game will be broadcast on LAN
+      VISIBILITY_LAN: ${VISIBILITY_LAN-true}
+      # Your factorio.com username. Required for games with visibility public
+      FACTORIO_USERNAME: ${FACTORIO_USERNAME?Missing username. Add a .env file}
+      # Your factorio.com token.
+      FACTORIO_TOKEN: ${FACTORIO_TOKEN?Missing token. Add a .env file}
+      # When set to true, the server will only allow clients that have a valid Factorio.com account
+      REQUIRE_USER_VERIFICATION: ${REQUIRE_USER_VERIFICATION-true}
+      # optional, default value is 0. 0 means unlimited.
+      MAX_UPLOAD_KBPS: ${MAX_UPLOAD_KBPS-0}
+      # optional, default value is 5. 0 means unlimited.
+      MAX_UPLOAD_SLOT: ${MAX_UPLOAD_SLOT-5}
+      # optional one tick is 16ms in default speed, default value is 0. 0 means no minimum.
+      MINIMUM_LATENCY: ${MINIMUM_LATENCY-0}
+      # Players that played on this map already can join even when the max player limit was reached.
+      IGNORE_LIMIT_FOR_RETURNING_PLAYERS: ${IGNORE_LIMIT_FOR_RETURNING_PLAYERS-false}
+      # possible values are, true, false and admins-only
+      ALLOW_COMMANDS: ${ALLOW_COMMANDS-admins-only}
+      # Autosave interval in minutes
+      AUTOSAVE_INTERVAL: ${AUTOSAVE_INTERVAL-10}
+      # server autosave slots, it is cycled through when the server autosaves.
+      AUTOSAVE_SLOTS: ${AUTOSAVE_SLOTS-5}
+      # How many minutes until someone is kicked when doing nothing, 0 for never.
+      AFK_KICK_INTERVAL: ${AFK_KICK_INTERVAL-0}
+      # Whether should the server be paused when no players are present.
+      AUTO_PAUSE: ${AUTO_PAUSE-true}
+      ONLY_ADMINS_CAN_PAUSE: ${ONLY_ADMINS_CAN_PAUSE-true}
+      # Whether autosaves should be saved only on server or also on all connected clients. Default is true.
+      AUTOSAVE_ONLY_SERVER: ${AUTOSAVE_ONLY_SERVER-true}
+      # Highly experimental feature, enable only at your own risk of losing your saves. On UNIX systems, server will fork itself to create an autosave. Autosaving on connected Windows clients will be disabled regardless of autosave_only_on_server option.
+      NON_BLOCKING_SAVE: ${NON_BLOCKING_SAVE-false}
+
+      # Long network messages are split into segments that are sent over multiple ticks. Their size depends on the number of peers currently connected. Increasing the segment size will increase upload bandwidth requirement for the server and download bandwidth requirement for clients. This setting only affects server outbound messages. Changing these settings can have a negative impact on connection stability for some clients.
+      MIN_SEGMENT_SIZE: ${MIN_SEGMENT_SIZE-25}
+      MIN_SEGMENT_SIZE_PEER_COUNT: ${MIN_SEGMENT_SIZE_PEER_COUNT-20}
+      MAX_SEGMENT_SIZE: ${MAX_SEGMENT_SIZE-100}
+      MAX_SEGMENT_SIZE_PEER_COUNT: ${MAX_SEGMENT_SIZE_PEER_COUNT-10}
+
+    volumes:
+      - ./server-settings.json.tmpl:/server-settings.json.tmpl
+      - factorioData:/factorio
+
+    entrypoint: /bin/bash -c "exec /entrypoint.sh"
+
+volumes:
+  factorioData:
+    driver: local
