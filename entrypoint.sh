@@ -17,6 +17,13 @@ else
     echo "[]" >/factorio/config/server-whitelist.json
 fi
 
+IFS=',' read -ra banlist <<<"$BANLIST"
+if [ ${#banlist[@]} -gt 0 ]; then
+    printf '%s\n' "${banlist[@]}" | jq --raw-input . | jq --slurp . >/factorio/config/server-banlist.json
+else
+    echo "[]" >/factorio/config/server-banlist.json
+fi
+
 mkdir -p /factorio/mods
 rm /factorio/mods/mod-list.json
 find /factorio/mods -name "*.zip" -type f -delete
